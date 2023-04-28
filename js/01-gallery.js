@@ -1,10 +1,43 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
-import * as basicLightbox from "basiclightbox";
+const divGallery = document.querySelector(".gallery");
+function createGalleryMarkup(items) {
+  return items
+    .map(
+      (item) =>
+        `<div class="gallery__item">
+        <a class="gallery__link" href="${item.original}">
+          <img
+            class="gallery__image"
+            src="${item.preview}"
+            data-source="${item.original}"
+            alt="${item.description}"
+          />
+        </a>
+      </div>`
+    )
+    .join("");
+}
+const addGalleryMarkup = createGalleryMarkup(galleryItems);
+divGallery.innerHTML = addGalleryMarkup;
 
-const instance = basicLightbox.create(`
-    <img src="https://cdn.pixabay.com/photo/2019/05/14/16/43/rchids-4202820__480.jpg">
+divGallery.addEventListener("click", onImageClick);
+function onImageClick(event) {
+  console.log(event);
+  function blockAction(event) {
+    event.preventDefault(event);
+  }
+  blockAction(event);
+  if (event.target.nodeName !== "IMG") {
+    return;
+  }
+  const instance = basicLightbox.create(`
+    <img src="${event.target.dataset.source}  "width="800" height="600">
 `);
-
-instance.show();
-console.log(galleryItems);
+  instance.show();
+  divGallery.addEventListener("keydown", (event) => {
+    if (event.code === "Escape") {
+      instance.close();
+    }
+  });
+}
